@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 100" width="340" height="100">
+
+  <!-- ===== FA monogram ===== -->
+  <!-- F: vertical stroke -->
+  <rect x="10" y="8" width="12" height="84" rx="1" fill="#e63946"/>
+  <!-- F: top horizontal (full width) -->
+  <rect x="10" y="8" width="52" height="12" rx="1" fill="#e63946"/>
+  <!-- F: middle horizontal (shorter) -->
+  <rect x="10" y="42" width="38" height="11" rx="1" fill="#e63946"/>
+  <!-- F: top-right diagonal cut (makes it angular) -->
+  <polygon points="52,8 62,8 52,20" fill="#060608"/>
+  <!-- F: mid-right diagonal cut -->
+  <polygon points="40,42 50,42 40,53" fill="#060608"/>
+
+  <!-- A: two diagonal legs meeting at top -->
+  <!-- Left leg of A -->
+  <polygon points="72,8 84,8 105,92 93,92" fill="#e63946"/>
+  <!-- Right leg of A -->
+  <polygon points="118,8 130,8 119,92 107,92" fill="#e63946"/>
+  <!-- A top point sharpened -->
+  <polygon points="79,8 123,8 101,8" fill="#e63946"/>
+  <!-- A crossbar -->
+  <rect x="88" y="56" width="26" height="10" rx="1" fill="#e63946"/>
+  <!-- A top merge -->
+  <polygon points="82,8 120,8 101,22" fill="#e63946"/>
+
+  <!-- ===== "beats" text ===== -->
+  <text x="146" y="74"
+        font-family="'Trebuchet MS','Arial Rounded MT Bold',Arial,sans-serif"
+        font-size="58"
+        font-weight="700"
+        fill="#ffffff"
+        letter-spacing="-1">beats</text>
+
+  <!-- ===== "DJ" text with slash ===== -->
+  <text x="282" y="58"
+        font-family="'Arial Black','Helvetica Neue',Arial,sans-serif"
+        font-size="28"
+        font-weight="900"
+        fill="#e63946"
+        letter-spacing="1">DJ</text>
+  <!-- slash accent under DJ -->
+  <line x1="278" y1="76" x2="328" y2="62"
+        stroke="#e63946" stroke-width="2.5" stroke-linecap="round"/>
+
+</svg>
