@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FaBeats DJ — Reservaciones para Eventos Privados</title>
   <meta name="description" content="DJ profesional para bodas, quinceañeras, cumpleaños y eventos corporativos. FaBeats — música para cada momento especial.">
-  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -38,8 +38,10 @@
     --glass-blur:   blur(20px) saturate(140%);
   }
 
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; cursor:none !important; }
   html { scroll-behavior:smooth; font-size:16px; }
+  /* disable custom cursor on touch devices */
+  @media (hover:none) { *, *::before, *::after { cursor:auto !important; } }
   body {
     font-family:'Inter', sans-serif;
     background: var(--bg);
@@ -65,7 +67,7 @@
   @keyframes spinReverse { to{transform:rotate(-360deg)} }
   @keyframes beat        { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(2.2)} }
   @keyframes scanline    { 0%{top:-10%} 100%{top:110%} }
-  @keyframes glowPulse   { 0%,100%{box-shadow:0 0 20px var(--red-glow)} 50%{box-shadow:0 0 60px var(--red-glow),0 0 100px rgba(230,57,70,.2)} }
+  @keyframes glowPulse   { 0%,100%{filter:drop-shadow(0 0 18px rgba(230,57,70,.55))} 50%{filter:drop-shadow(0 0 44px rgba(230,57,70,.9)) drop-shadow(0 0 80px rgba(230,57,70,.3))} }
   @keyframes numberCount { from{opacity:0;transform:scale(.6)} to{opacity:1;transform:scale(1)} }
   @keyframes beamRotate  { from{transform:rotate(-30deg)} to{transform:rotate(30deg)} }
   @keyframes orbFloat    { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(40px,-55px) scale(1.12)} }
@@ -78,6 +80,70 @@
   .reveal { opacity:0; transform:translateY(40px); transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
   .reveal.on { opacity:1; transform:none; }
   .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s}
+
+  /* ============================================================
+     CUSTOM CURSOR
+  ============================================================ */
+  #cursor-dot {
+    position:fixed; top:0; left:0; z-index:999999; pointer-events:none;
+    width:8px; height:8px; border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 10px var(--red-glow), 0 0 20px rgba(230,57,70,.3);
+    transform:translate(-50%,-50%);
+    transition:width .15s ease, height .15s ease, background .2s ease, opacity .3s;
+    will-change:left,top;
+  }
+  #cursor-ring {
+    position:fixed; top:0; left:0; z-index:999998; pointer-events:none;
+    width:38px; height:38px; border-radius:50%;
+    border:1.5px solid rgba(230,57,70,.55);
+    transform:translate(-50%,-50%);
+    transition:width .35s ease, height .35s ease, border-color .35s ease,
+               opacity .35s ease, border-width .2s ease;
+    will-change:left,top;
+    mix-blend-mode:normal;
+  }
+  /* interactive hover state */
+  body.c-hover #cursor-dot {
+    width:12px; height:12px;
+    background:var(--red-lt);
+    box-shadow:0 0 16px var(--red-glow), 0 0 30px rgba(230,57,70,.4);
+  }
+  body.c-hover #cursor-ring {
+    width:58px; height:58px;
+    border-color:rgba(230,57,70,.8);
+    border-width:1px;
+  }
+  /* click burst */
+  body.c-click #cursor-ring {
+    width:70px; height:70px;
+    border-color:rgba(230,57,70,.3);
+    opacity:.5;
+    transition:width .18s ease, height .18s ease, opacity .18s ease;
+  }
+  body.c-click #cursor-dot {
+    transform:translate(-50%,-50%) scale(1.8);
+    transition:transform .12s ease;
+  }
+  /* on red background — switch to white so it doesn't get lost */
+  body.c-red #cursor-dot {
+    background:#fff;
+    box-shadow:0 0 10px rgba(255,255,255,.7), 0 0 22px rgba(255,255,255,.25);
+  }
+  body.c-red #cursor-ring {
+    border-color:rgba(255,255,255,.75);
+  }
+  body.c-red.c-hover #cursor-dot {
+    background:#fff;
+    box-shadow:0 0 16px rgba(255,255,255,.85), 0 0 32px rgba(255,255,255,.3);
+  }
+  body.c-red.c-hover #cursor-ring {
+    border-color:rgba(255,255,255,.95);
+  }
+  /* hide while outside window */
+  body.c-out #cursor-dot, body.c-out #cursor-ring { opacity:0; }
+  /* disable on touch */
+  @media(hover:none){ #cursor-dot, #cursor-ring { display:none; } }
 
   /* ============================================================
      PARTICLE CANVAS
@@ -228,11 +294,16 @@
   }
   .nav-logo { display:flex; align-items:center; gap:0; }
   .nav-logo img {
-    height:44px; width:auto; object-fit:contain;
+    height:64px; width:auto; object-fit:contain;
     filter:drop-shadow(0 0 12px rgba(230,57,70,.5));
-    transition:filter .3s;
+    transition:filter .3s, opacity .45s ease, transform .45s ease;
+    opacity:0; transform:translateY(-6px); pointer-events:none;
   }
   .nav-logo:hover img { filter:drop-shadow(0 0 22px rgba(230,57,70,.8)); }
+  /* logo visible once hero logo scrolls out */
+  #navbar.nav-logo-show .nav-logo img {
+    opacity:1; transform:translateY(0); pointer-events:all;
+  }
 
   .nav-links { display:flex; align-items:center; gap:2.4rem; }
   .nav-links a {
@@ -294,8 +365,7 @@
     opacity:0; transform:translateY(-20px); animation:riseUp .9s .1s forwards ease;
   }
   .hero-logo-wrap img {
-    height:110px; width:auto; object-fit:contain;
-    filter:drop-shadow(0 0 30px rgba(230,57,70,.6));
+    height:180px; width:auto; max-width:600px; object-fit:contain;
     animation:glowPulse 3s ease-in-out infinite;
   }
 
@@ -698,7 +768,7 @@
 
   /* back-to-top button */
   #back-to-top {
-    position:fixed; bottom:6.2rem; right:2rem; z-index:9997;
+    position:fixed; bottom:10rem; right:2rem; z-index:9997;
     width:44px; height:44px; border-radius:50%;
     background:rgba(230,57,70,.1); border:1px solid rgba(230,57,70,.38);
     color:var(--red); display:flex; align-items:center; justify-content:center;
@@ -791,7 +861,7 @@
 
   .footer-grid { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr; gap:3rem; margin-bottom:3rem; }
   .footer-logo-wrap { display:flex; align-items:center; margin-bottom:1rem; }
-  .footer-logo-wrap img { height:52px; width:auto; filter:drop-shadow(0 0 14px rgba(230,57,70,.4)); }
+  .footer-logo-wrap img { height:70px; width:auto; filter:drop-shadow(0 0 14px rgba(230,57,70,.4)); }
   .footer-tagline { font-style:italic; color:var(--muted); margin-bottom:1rem; font-size:.9rem; }
   .footer-brand p { color:var(--muted); font-size:.88rem; max-width:300px; line-height:1.7; }
   .footer-social { display:flex; gap:.7rem; margin-top:1.4rem; }
@@ -838,6 +908,10 @@
 </head>
 <body>
 
+<!-- custom cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
 <canvas id="particle-canvas"></canvas>
 
 <!-- fixed spotlights — visibles en toda la página -->
@@ -855,7 +929,7 @@
 <!-- ============================================================ NAVBAR ============================================================ -->
 <nav id="navbar">
   <a href="#hero" class="nav-logo">
-    <img src="assets/logo.svg" alt="FaBeats DJ">
+    <img src="assets/logo.png" alt="FaBeats DJ">
   </a>
   <div class="nav-links">
     <a href="#servicios">Servicios</a>
@@ -871,7 +945,7 @@
 
 <div id="mobile-menu">
   <button class="mob-close" id="mob-close">✕</button>
-  <img src="assets/logo.svg" alt="FaBeats DJ" style="height:70px;width:auto;filter:drop-shadow(0 0 20px rgba(230,57,70,.6));margin-bottom:1rem;">
+  <img src="assets/logo.png" alt="FaBeats DJ" style="height:100px;width:auto;filter:drop-shadow(0 0 20px rgba(230,57,70,.6));margin-bottom:1rem;">
   <a href="#servicios">Servicios</a>
   <a href="#proceso">Proceso</a>
   <a href="#galeria">Galería</a>
@@ -890,7 +964,7 @@
 
   <div class="hero-content">
     <div class="hero-logo-wrap">
-      <img src="assets/logo.svg" alt="FaBeats DJ">
+      <img src="assets/logo.png" alt="FaBeats DJ">
     </div>
 
     <h1 class="hero-h1">
@@ -1300,7 +1374,7 @@
   <div class="footer-grid">
     <div class="footer-brand">
       <div class="footer-logo-wrap">
-        <img src="assets/logo.svg" alt="FaBeats DJ">
+        <img src="assets/logo.png" alt="FaBeats DJ">
       </div>
       <p class="footer-tagline">DJ Profesional · Eventos Privados</p>
       <p>Haciendo que cada evento sea una experiencia musical que nadie olvide. La música perfecta para el momento perfecto.</p>
@@ -1474,9 +1548,97 @@ const evTrack = document.getElementById('events-track');
 if (evTrack) evTrack.innerHTML += evTrack.innerHTML;
 
 /* ============================================================
+   CUSTOM CURSOR
+============================================================ */
+(function() {
+  const dot  = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  if (!dot || !ring) return;
+
+  // Skip on touch devices
+  if (window.matchMedia('(hover:none)').matches) return;
+
+  let mX = -200, mY = -200;   // mouse exact position
+  let rX = -200, rY = -200;   // ring lerped position
+
+  const INTERACTIVE = 'a,button,[onclick],input,select,textarea,label,.pkg-card,.pkg-cta,.g-item,.wa-btn,#back-to-top,.modal-close,.hamburger,.mob-close';
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  // Detect if cursor is over a red-background element
+  function isOnRed(el) {
+    if (!el) return false;
+    // Fast path: known red-bg selectors
+    if (el.closest('.btn-red, .pkg-cta-hot, .pkg-hot-tag, .wa-btn')) return true;
+    // Computed style walk (max 5 levels)
+    let cur = el;
+    for (let i = 0; i < 5; i++) {
+      if (!cur || cur === document.documentElement) break;
+      const bg = getComputedStyle(cur).backgroundColor;
+      const m  = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (m && +m[1] > 150 && +m[2] < 90 && +m[3] < 90) return true;
+      cur = cur.parentElement;
+    }
+    return false;
+  }
+
+  window.addEventListener('mousemove', e => {
+    mX = e.clientX;
+    mY = e.clientY;
+    // Hover & red detection via element under cursor
+    const el = document.elementFromPoint(mX, mY);
+    document.body.classList.toggle('c-hover', !!(el && el.closest(INTERACTIVE)));
+    document.body.classList.toggle('c-red',   isOnRed(el));
+    document.body.classList.remove('c-out');
+  }, { passive: true });
+
+  // Hide when leaving window
+  document.addEventListener('mouseleave', () => document.body.classList.add('c-out'));
+  document.addEventListener('mouseenter', () => document.body.classList.remove('c-out'));
+
+  // Click burst
+  document.addEventListener('mousedown', () => {
+    document.body.classList.add('c-click');
+  });
+  document.addEventListener('mouseup', () => {
+    document.body.classList.remove('c-click');
+  });
+
+  // Animation loop — dot snaps, ring lerps
+  function tick() {
+    rX = lerp(rX, mX, 0.1);
+    rY = lerp(rY, mY, 0.1);
+
+    dot.style.left  = mX + 'px';
+    dot.style.top   = mY + 'px';
+    ring.style.left = rX + 'px';
+    ring.style.top  = rY + 'px';
+
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* ============================================================
    DATE FIELD — restringir fechas pasadas
 ============================================================ */
 document.getElementById('f-fecha').min = new Date().toISOString().split('T')[0];
+
+/* ============================================================
+   NAVBAR LOGO — aparece al salir el logo del hero del viewport
+============================================================ */
+(function() {
+  const heroLogo = document.querySelector('.hero-logo-wrap');
+  const nav      = document.getElementById('navbar');
+  if (!heroLogo || !nav) return;
+
+  const obs = new IntersectionObserver(entries => {
+    // Show navbar logo when hero logo is NOT visible
+    nav.classList.toggle('nav-logo-show', !entries[0].isIntersecting);
+  }, { threshold: 0.15 });
+
+  obs.observe(heroLogo);
+})();
 
 /* ============================================================
    BACK TO TOP
